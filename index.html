@@ -1,196 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>YatraSetu — Plan your trip</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Paperflow — Newspaper Reader</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+<header>
+  <div class="brand"><b>P</b> Paperflow</div>
+  <span>OCR · LOCAL PROCESSING</span>
+</header>
 
-    <header>
-        <div class="brand">
-            <span class="brand-mark">YS</span>
-            <span class="brand-name">YatraSetu</span>
-        </div>
+<main>
+<section class="hero" id="hero">
+  <div class="eyebrow">NEWSPAPER → READABLE EDITION</div>
+  <h1>Your newspaper.<br><em>Actually readable.</em></h1>
+  <p>Upload a newspaper PDF. Paperflow renders every page, runs OCR in your browser, identifies likely headlines, groups them into broad sections, and creates a clickable downloadable readable PDF.</p>
 
-        <div class="tagline">
-            Trip plans built around your budget, not a template
-        </div>
+  <label class="drop" id="drop">
+    <input id="pdfInput" type="file" accept="application/pdf">
+    <div class="uploadIcon">↑</div>
+    <strong>Choose newspaper PDF</strong>
+    <span>or drag and drop</span>
+    <small id="fileName">OCR runs locally in your browser · nothing is uploaded</small>
+  </label>
 
-        <button class="profile" aria-label="Account">SP</button>
-    </header>
+  <button class="primary" id="processBtn" disabled>Create readable PDF</button>
 
+  <div class="progress hidden" id="progress">
+    <div class="progressTop">
+      <span id="progressText">Preparing…</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="bar"><i id="progressBar"></i></div>
+  </div>
+</section>
 
-    <main>
+<section class="result hidden" id="result">
+  <div class="resultHead">
+    <div>
+      <div class="eyebrow">READY</div>
+      <h2 id="resultTitle">Readable edition</h2>
+      <p id="resultMeta"></p>
+    </div>
+    <div class="actions">
+      <button class="secondary" id="newBtn">New PDF</button>
+      <button class="primary small" id="downloadBtn">Download PDF</button>
+    </div>
+  </div>
 
-        <!-- HERO -->
+  <div class="preview">
+    <aside>
+      <div class="sideTitle">CONTENTS</div>
+      <div id="toc"></div>
+    </aside>
+    <article id="preview"></article>
+  </div>
+</section>
+</main>
 
-        <section class="hero">
-
-            <div class="hero-copy">
-                <p class="eyebrow">Weekend and short-break planning</p>
-
-                <h1>
-                    Find where ₹<span id="hero-budget">5,000</span>
-                    actually takes you.
-                </h1>
-
-                <p class="hero-sub">
-                    Set a budget, a window of time and what you're in the mood
-                    for. We match it against real routes out of your city and
-                    lay out a day-by-day plan, not just a list of places.
-                </p>
-            </div>
-
-            <div class="hero-stat">
-                <span class="hero-stat-value" id="hero-count">14</span>
-                <span class="hero-stat-label">destinations within reach of <span id="hero-city">Vijayawada</span>, scored against your inputs</span>
-                <div class="hero-stat-bar">
-                    <div class="hero-stat-fill" id="hero-fill"></div>
-                </div>
-                <span class="hero-stat-caption" id="hero-caption">Adjust the planner below to see what fits</span>
-            </div>
-
-        </section>
-
-
-        <!-- TRIP PLANNER -->
-
-        <section class="planner">
-
-            <div class="planner-head">
-                <h2>Plan your journey</h2>
-                <p>Every field below changes the match below it — try moving the slider.</p>
-            </div>
-
-            <div class="inputs">
-
-                <div class="input-box">
-                    <label for="location">Starting from</label>
-                    <select id="location">
-                        <option value="vijayawada">Vijayawada</option>
-                        <option value="hyderabad">Hyderabad</option>
-                        <option value="mumbai">Mumbai</option>
-                        <option value="delhi">Delhi</option>
-                    </select>
-                </div>
-
-                <div class="input-box wide">
-                    <label for="budget">Budget per person</label>
-                    <div class="budget-row">
-                        <input type="range" id="budget" min="1500" max="15000" step="250" value="5000">
-                        <span class="budget-value">₹<span id="budget-display">5,000</span></span>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="input-box">
-                <label>Duration</label>
-                <div class="segmented" id="duration-group" role="radiogroup" aria-label="Trip duration">
-                    <button class="segment active" data-days="2">Weekend<span>2 days</span></button>
-                    <button class="segment" data-days="3">Long weekend<span>3 days</span></button>
-                    <button class="segment" data-days="5">Short break<span>5 days</span></button>
-                    <button class="segment" data-days="7">Full week<span>7 days</span></button>
-                </div>
-            </div>
-
-            <div class="input-box">
-                <label>Travelers</label>
-                <div class="stepper">
-                    <button type="button" id="travelers-minus" aria-label="Fewer travelers">–</button>
-                    <span id="travelers-count">2</span>
-                    <button type="button" id="travelers-plus" aria-label="More travelers">+</button>
-                </div>
-            </div>
-
-            <h3>What matters most on this trip?</h3>
-            <p class="hint">Pick two or three — matching gets less precise past that.</p>
-
-            <div class="interests" id="interest-group">
-                <button class="interest active" data-tag="nature">Nature</button>
-                <button class="interest active" data-tag="food">Food</button>
-                <button class="interest" data-tag="culture">Culture</button>
-                <button class="interest" data-tag="adventure">Adventure</button>
-                <button class="interest" data-tag="beaches">Beaches</button>
-                <button class="interest" data-tag="peaceful">Peaceful</button>
-            </div>
-
-            <button class="create-trip" id="create-trip">
-                Match my trip
-            </button>
-
-            <p id="message"></p>
-
-        </section>
-
-
-        <!-- RECOMMENDATIONS -->
-
-        <section class="recommendations" id="recommendations">
-
-            <div class="section-title">
-                <div>
-                    <small>Matched to your planner</small>
-                    <h2 id="results-heading">Top picks for this weekend</h2>
-                </div>
-                <span id="results-count-badge">3 matches</span>
-            </div>
-
-            <div class="destination-list" id="destination-list">
-                <!-- populated by script.js -->
-            </div>
-
-        </section>
-
-        <!-- ITINERARY DETAIL (hidden until a destination is expanded) -->
-        <section class="itinerary" id="itinerary" hidden>
-
-            <div class="itinerary-head">
-                <div>
-                    <small id="itinerary-eyebrow">Day-by-day plan</small>
-                    <h2 id="itinerary-title"></h2>
-                </div>
-                <button class="close-itinerary" id="close-itinerary" aria-label="Close plan">Close</button>
-            </div>
-
-            <div class="itinerary-body">
-                <div class="itinerary-days" id="itinerary-days"></div>
-
-                <div class="itinerary-cost">
-                    <h3>Cost per person</h3>
-                    <div class="cost-rows" id="cost-rows"></div>
-                    <div class="cost-total">
-                        <span>Total</span>
-                        <span id="cost-total-value"></span>
-                    </div>
-                    <p class="cost-note" id="cost-note"></p>
-                </div>
-            </div>
-
-            <div class="itinerary-trust" id="itinerary-trust">
-                <!-- populated by script.js -->
-            </div>
-
-        </section>
-
-    </main>
-
-    <footer>
-        <p>Fares and stay costs are estimates from typical off-season rates and shift with season and availability.</p>
-    </footer>
-
-    <script src="script.js"></script>
-
+<script src="app.js" type="module"></script>
 </body>
-
 </html>
